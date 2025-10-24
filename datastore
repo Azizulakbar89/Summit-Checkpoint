@@ -1,0 +1,33 @@
+local data = game:GetService("DataStoreService"):GetDataStore("SaveData")
+
+game.Players.PlayerAdded:Connect(function(pemain)
+	wait()
+	local pemainky = "id_"..pemain.UserId
+	local save1 = pemain.leaderstats.Checkpoint
+	local save2 = pemain.leaderstats.Summit
+	
+	local success, GetSaved = pcall(function()
+		return data:GetAsync(pemainky)
+	end)
+	
+	if success and GetSaved then
+		save1.Value = GetSaved[1] or 0
+		save2.Value = GetSaved[2] or 0
+	else
+		save1.Value = 0
+		save2.Value = 0
+		local Number = {save1.Value, save2.Value}
+		
+		pcall(function()
+			data:SetAsync(pemainky, Number)
+		end)
+	end
+end)
+
+game.Players.PlayerRemoving:Connect(function(pemain)
+	local dataSave = {pemain.leaderstats.Checkpoint.Value, pemain.leaderstats.Summit.Value}
+	
+	pcall(function()
+		data:SetAsync("id_"..pemain.UserId, dataSave)
+	end)
+end)
