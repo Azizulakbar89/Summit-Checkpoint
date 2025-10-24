@@ -1,0 +1,54 @@
+local checkpoints = {}
+local skip = true
+
+game.Players.PlayerAdded:Connect(function(player)
+	local leaderstats = Instance.new("Folder", player)
+	leaderstats.Name = "leaderstats"
+	
+	local checkpoint = Instance.new("IntValue", leaderstats)
+	checkpoint.Name = "Checkpoint"
+	checkpoint.Value = 0
+	
+	local summit = Instance.new("IntValue", leaderstats)
+	summit.Name = "Summit"
+	summit.Value = 0
+	
+	player.CharacterAdded:Connect(function(character)
+		local start = checkpoints[checkpoint.Value]
+		if start then
+			repeat wait() until character.Parent
+			character:MoveTo(start.Position)
+		else
+			warn("Checkpoint "..checkpoint.Value)
+		end
+	end)
+end)
+
+local i=1
+while true do
+	local ckp = workspace:FindFirstChild("CP "..i, true)
+	if not ckp then print("CP TERAKHIR "..i-1)
+		break
+	end
+	table.insert(checkpoints, ckp)
+	i=i+1
+end
+
+for index, ckp in pairs(checkpoints) do
+	ckp.Touched:Connect(function(hit)
+		local player = game.Players:GetPlayerFromCharacter(hit.Parent)
+		if not player then return end
+		local humanoid = hit.Parent:FindFirstChild("Humanoid")
+		
+		if not humanoid or humanoid.Health <=0 then return end
+		local leaderstats = player:FindFirstChild("leaderstats")
+		
+		if not leaderstats then return end
+		local checkpoint = leaderstats:FindFirstChild("Checkpoint")
+		
+		if not leaderstats then return end
+		if(skip and checkpoint.Value+1 == index) or (not skip and checkpoint.Value<index) then
+			checkpoint.Value = index
+		end
+	end)
+end
