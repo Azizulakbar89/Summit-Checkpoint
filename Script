@@ -1,0 +1,13 @@
+local tp = workspace.Finish
+local maxCP = 2
+
+script.Parent.Touched:Connect(function(hit)
+	local player = game.Players:GetPlayerFromCharacter(hit.Parent)
+	if player then
+		if player.leaderstats:WaitForChild("Checkpoint").Value == maxCP then
+			player.leaderstats:WaitForChild("Summit").Value += 1
+			player.leaderstats:WaitForChild("Checkpoint").Value = 0
+			db=false
+		end
+	end
+end)
